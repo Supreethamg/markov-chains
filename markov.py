@@ -1,6 +1,6 @@
 """Generate Markov text from text files."""
 
-from random import choice
+import random
 
 
 def open_and_read_file(file_path):
@@ -10,9 +10,9 @@ def open_and_read_file(file_path):
     the file's contents as one string of text.
     """
 
-    # your code goes here
-
-    return "Contents of your file as one long string"
+    file_data = open(file_path).read()
+   
+    return file_data
 
 
 def make_chains(text_string):
@@ -41,9 +41,22 @@ def make_chains(text_string):
     """
 
     chains = {}
+    text = text_string.split()
 
-    # your code goes here
+    for i in range(0,len(text) - 2):
+       key_tuple=(text[i],text[i+1])
+       
+       if key_tuple in chains:
+            chains[key_tuple].append(text[i+2])
+       else:
+            
+            chains[key_tuple]=[text[i+2]]
+        
+           
 
+    for key,value in chains.items():
+        print(key, ':' , value)
+   
     return chains
 
 
@@ -51,8 +64,29 @@ def make_text(chains):
     """Return text from chains."""
 
     words = []
+    # creating a random key
+    list_keys = list(chains.keys())
+    key = random.choice(list_keys)
+    # Creating a random value
+    value = random.choice(chains[key])
+    #creating first link with key and value
+    link = f'{key[0]} {key[1]} {value}'
+    words.append(link)
 
-    # your code goes here
+    while key in chains:
+        #Creating a new key
+        new_key = link.split(" ")[-2:]
+        new_key_tuple = tuple(new_key)
+
+         #if new key is chains then create new value
+        if new_key_tuple in chains.keys():
+            new_value = random.choice(chains[new_key_tuple])
+            words.append(new_value)
+            key = new_key_tuple
+            link = f'{new_key[0]} {new_key[1]} {new_value}'
+        else:
+            break
+
 
     return " ".join(words)
 
